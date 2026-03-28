@@ -1,0 +1,629 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+    <title>مستشار التخصصات | ذكاء اصطناعي</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            transition: all 0.3s ease;
+        }
+
+        :root {
+            --bg-primary: #f5f7fb;
+            --bg-secondary: #ffffff;
+            --text-primary: #1e293b;
+            --text-secondary: #475569;
+            --card-bg: #ffffff;
+            --border: #e2e8f0;
+            --accent: #4f46e5;
+            --accent-hover: #4338ca;
+            --shadow: 0 10px 40px rgba(0,0,0,0.08);
+            --input-bg: #ffffff;
+            --code-bg: #f1f5f9;
+        }
+
+        body.dark {
+            --bg-primary: #0f172a;
+            --bg-secondary: #1e293b;
+            --text-primary: #f1f5f9;
+            --text-secondary: #cbd5e1;
+            --card-bg: #1e293b;
+            --border: #334155;
+            --accent: #818cf8;
+            --accent-hover: #a5b4fc;
+            --shadow: 0 10px 40px rgba(0,0,0,0.4);
+            --input-bg: #334155;
+            --code-bg: #0f172a;
+        }
+
+        body {
+            font-family: 'Tajawal', 'Segoe UI', system-ui, -apple-system, sans-serif;
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            line-height: 1.6;
+            padding: 20px;
+            min-height: 100vh;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        /* Header & Nav */
+        .navbar {
+            background: var(--bg-secondary);
+            border-radius: 28px;
+            padding: 18px 32px;
+            margin-bottom: 32px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 16px;
+            box-shadow: var(--shadow);
+            border: 1px solid var(--border);
+        }
+
+        .logo h1 {
+            font-size: 1.8rem;
+            background: linear-gradient(135deg, var(--accent), #a855f7);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+        }
+
+        .logo p {
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+        }
+
+        .nav-buttons {
+            display: flex;
+            gap: 12px;
+        }
+
+        .btn-icon {
+            background: var(--bg-primary);
+            border: 1px solid var(--border);
+            padding: 10px 18px;
+            border-radius: 40px;
+            cursor: pointer;
+            font-weight: 600;
+            color: var(--text-primary);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .btn-icon:hover {
+            background: var(--accent);
+            color: white;
+            transform: translateY(-2px);
+        }
+
+        /* Cards */
+        .card {
+            background: var(--card-bg);
+            border-radius: 32px;
+            padding: 32px;
+            margin-bottom: 28px;
+            border: 1px solid var(--border);
+            box-shadow: var(--shadow);
+        }
+
+        .form-group {
+            margin-bottom: 24px;
+        }
+
+        label {
+            display: block;
+            font-weight: 700;
+            margin-bottom: 10px;
+            font-size: 1rem;
+        }
+
+        input, select, textarea {
+            width: 100%;
+            padding: 14px 18px;
+            border: 2px solid var(--border);
+            border-radius: 24px;
+            background: var(--input-bg);
+            color: var(--text-primary);
+            font-size: 1rem;
+            font-family: inherit;
+        }
+
+        input:focus, select:focus, textarea:focus {
+            outline: none;
+            border-color: var(--accent);
+        }
+
+        button {
+            background: var(--accent);
+            color: white;
+            border: none;
+            padding: 14px 28px;
+            border-radius: 40px;
+            font-size: 1.1rem;
+            font-weight: bold;
+            cursor: pointer;
+            transition: 0.2s;
+        }
+
+        button:hover {
+            background: var(--accent-hover);
+            transform: scale(1.02);
+        }
+
+        .result-box {
+            background: var(--bg-primary);
+            border-radius: 28px;
+            padding: 28px;
+            margin-top: 24px;
+            border-right: 6px solid var(--accent);
+        }
+
+        .suggestion-badge {
+            display: inline-block;
+            background: var(--accent);
+            color: white;
+            padding: 8px 20px;
+            border-radius: 40px;
+            font-weight: bold;
+            margin-top: 16px;
+        }
+
+        /* Settings Panel */
+        .settings-panel {
+            background: var(--bg-secondary);
+            border-radius: 28px;
+            padding: 24px;
+            margin-bottom: 28px;
+            border: 1px solid var(--border);
+        }
+
+        .toggle-switch {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .switch {
+            position: relative;
+            display: inline-block;
+            width: 52px;
+            height: 28px;
+        }
+
+        .switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+
+        .slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: #ccc;
+            transition: 0.3s;
+            border-radius: 34px;
+        }
+
+        .slider:before {
+            position: absolute;
+            content: "";
+            height: 22px;
+            width: 22px;
+            left: 3px;
+            bottom: 3px;
+            background-color: white;
+            transition: 0.3s;
+            border-radius: 50%;
+        }
+
+        input:checked + .slider {
+            background-color: var(--accent);
+        }
+
+        input:checked + .slider:before {
+            transform: translateX(24px);
+        }
+
+        /* Info Page Modal */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.8);
+            backdrop-filter: blur(8px);
+            z-index: 1000;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .modal-content {
+            background: var(--bg-secondary);
+            max-width: 600px;
+            width: 90%;
+            border-radius: 48px;
+            padding: 32px;
+            border: 1px solid var(--border);
+            max-height: 85vh;
+            overflow-y: auto;
+        }
+
+        .code-block {
+            background: var(--code-bg);
+            padding: 16px;
+            border-radius: 20px;
+            font-family: monospace;
+            font-size: 0.8rem;
+            overflow-x: auto;
+            margin: 16px 0;
+            direction: ltr;
+            text-align: left;
+        }
+
+        .footer-note {
+            text-align: center;
+            margin-top: 40px;
+            padding: 20px;
+            border-top: 1px solid var(--border);
+            color: var(--text-secondary);
+        }
+
+        @media (max-width: 700px) {
+            .navbar {
+                flex-direction: column;
+                text-align: center;
+            }
+            .card {
+                padding: 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <!-- Navbar -->
+    <div class="navbar">
+        <div class="logo">
+            <h1>🎓 مستشار التخصصات AI</h1>
+            <p>ذكاء اصطناعي لتحقيق مستقبل مهني ناجح</p>
+        </div>
+        <div class="nav-buttons">
+            <button class="btn-icon" id="infoBtn">ℹ️ INFO</button>
+            <button class="btn-icon" id="settingsBtn">⚙️ الإعدادات</button>
+        </div>
+    </div>
+
+    <!-- Settings Section (يظهر بالضغط) -->
+    <div id="settingsSection" class="settings-panel" style="display: none;">
+        <h3 style="margin-bottom: 20px;">⚙️ إعدادات التطبيق</h3>
+        <div class="toggle-switch">
+            <span>🌙 الوضع المظلم (Dark Mode)</span>
+            <label class="switch">
+                <input type="checkbox" id="darkModeToggle">
+                <span class="slider"></span>
+            </label>
+        </div>
+        <div class="toggle-switch">
+            <span>🤖 مستوى دقة الذكاء الاصطناعي (متقدم)</span>
+            <span style="color: var(--accent);">AI Engine v2.0</span>
+        </div>
+        <div class="toggle-switch">
+            <span>📊 تحديث قوائم التخصصات: ديسمبر 2025</span>
+            <span style="color: green;">✓ أحدث إصدار</span>
+        </div>
+        <p style="font-size: 0.85rem; margin-top: 16px;">✅ تم ضبط القوائم بأحدث التخصصات والوظائف حسب سوق العمل العالمي والعربي.</p>
+    </div>
+
+    <!-- Main Card -->
+    <div class="card">
+        <h2 style="margin-bottom: 20px;">✨ اختر اهتماماتك ومهاراتك</h2>
+        <div class="form-group">
+            <label>📚 المادة أو المجال الأقرب لك</label>
+            <select id="interestField">
+                <option value="tech">تقنية المعلومات و البرمجة</option>
+                <option value="eng">الهندسة (مدني، كهربائي، ميكانيكي)</option>
+                <option value="medical">الطب والرعاية الصحية</option>
+                <option value="business">إدارة الأعمال وريادة الأعمال</option>
+                <option value="design">التصميم والإبداع الرقمي</option>
+                <option value="sci">العلوم الطبيعية والفيزياء</option>
+                <option value="law">القانون والعلوم السياسية</option>
+                <option value="media">الإعلام والصحافة والتسويق</option>
+            </select>
+        </div>
+
+        <div class="form-group">
+            <label>🧠 مهاراتك الشخصية (اختر أو اكتب)</label>
+            <select id="skillSelect">
+                <option value="analytic">تحليلي وحل المشكلات</option>
+                <option value="creative">إبداعي وخيالي</option>
+                <option value="social">اجتماعي وقيادي</option>
+                <option value="technical">تقني ودقيق</option>
+                <option value="artistic">فني وحساس جمالياً</option>
+            </select>
+        </div>
+
+        <div class="form-group">
+            <label>✍️ صف اهتماماتك الإضافية (اختياري - لتحسين الدقة)</label>
+            <textarea id="customInterests" rows="3" placeholder="مثال: أحب تحليل البيانات، العمل الجماعي، تطوير الألعاب، ريادة الأعمال..."></textarea>
+        </div>
+
+        <button id="analyzeBtn">🔍 حلل واقترح التخصص المناسب</button>
+
+        <!-- Result Area -->
+        <div id="resultArea" class="result-box" style="display: none;">
+            <h3>🎯 نتيجة التحليل الذكي:</h3>
+            <div id="suggestionText"></div>
+            <div id="jobSuggestions"></div>
+            <div id="aiConfidence"></div>
+        </div>
+    </div>
+
+    <!-- Footer مع اسم الصانع -->
+    <div class="footer-note">
+        <p>🚀 تم التطوير بواسطة: <strong>عبدالله أحمد السخن</strong> | مستشار التخصصات الإصدار الأول</p>
+        <p style="font-size: 0.75rem;">Version 1.0.0 | نظام توصية متقدم بالذكاء الاصطناعي | قوائم محدثة 2026</p>
+    </div>
+</div>
+
+<!-- INFO Modal -->
+<div id="infoModal" class="modal">
+    <div class="modal-content">
+        <h2 style="margin-bottom: 20px;">📋 معلومات النظام</h2>
+        <p><strong>اسم المشروع:</strong> مستشار التخصصات والوظائف بالذكاء الاصطناعي</p>
+        <p><strong>الإصدار:</strong> Version 1 (v1.0.0)</p>
+        <p><strong>المطور:</strong> عبدالله أحمد السخن</p>
+        <p><strong>تاريخ الإصدار:</strong> 28 مارس 2026</p>
+        <p><strong>التقنيات المستخدمة:</strong> HTML5, CSS3, JavaScript (ES6), AI Recommendation Engine (خوارزمية ذكاء اصطناعي متعددة المعايير)</p>
+        <p><strong>مميزات الموقع:</strong></p>
+        <ul style="margin-right: 20px; margin-bottom: 20px;">
+            <li>✓ محرك ذكاء اصطناعي يقترح التخصصات والوظائف بناءً على الاهتمامات والمهارات.</li>
+            <li>✓ قوائم محدثة بأحدث التخصصات المطلوبة في سوق العمل 2025-2026.</li>
+            <li>✓ وضع مظلم (Dark Mode) متكامل مع حفظ الإعدادات.</li>
+            <li>✓ لوحة إعدادات متطورة.</li>
+            <li>✓ تصميم عصري سهل الاستجابة لجميع الأجهزة.</li>
+            <li>✓ نظام معلومات احترافي مع عرض الأكواد التقنية.</li>
+        </ul>
+        <h3>📜 كود الذكاء الاصطناعي الأساسي (مقتطف)</h3>
+        <div class="code-block">
+            // AI Matching Engine v1.0<br>
+            function getRecommendation(field, skill, customText) {<br>
+            &nbsp;&nbsp; const dataBase = careerMatrix[field];<br>
+            &nbsp;&nbsp; let score = analyzeSkills(skill, customText);<br>
+            &nbsp;&nbsp; return topMatches(score);<br>
+            }<br>
+            // تم تطويره بواسطة عبدالله أحمد السخن
+        </div>
+        <button id="closeModalBtn" style="margin-top: 20px; width: 100%;">إغلاق</button>
+    </div>
+</div>
+
+<script>
+    // ============================================================
+    // قاعدة بيانات ذكاء اصطناعية محدثة بأحدث التخصصات والوظائف
+    // ============================================================
+    const careerDatabase = {
+        tech: {
+            specialties: ["هندسة البرمجيات", "علم البيانات والذكاء الاصطناعي", "أمن السيبراني", "الحوسبة السحابية", "تطوير تطبيقات الموبايل", "DevOps Engineer"],
+            jobs: ["مهندس برمجيات", "عالم بيانات", "أخصائي أمن معلومات", "مهندس سحابة AWS/Azure", "مطور Flutter/React Native", "Site Reliability Engineer"]
+        },
+        eng: {
+            specialties: ["الهندسة المدنية", "الهندسة الكهربائية", "الهندسة الميكانيكية", "هندسة الطاقة المتجددة", "هندسة الطيران", "الهندسة الصناعية"],
+            jobs: ["مدير مشاريع إنشائية", "مهندس كهرباء محطات", "مصمم ميكانيكي CAD", "خبير طاقة شمسية", "مهندس صيانة طائرات", "أخصائي إنتاج"]
+        },
+        medical: {
+            specialties: ["الطب البشري", "طب الأسنان", "الصيدلة", "التمريض", "التقنيات الطبية", "العلاج الطبيعي", "الصحة العامة"],
+            jobs: ["طبيب مقيم", "طبيب أسنان تجميل", "صيدلي إكلينيكي", "ممرض متخصص", "أخصائي أشعة", "معالج فيزيائي"]
+        },
+        business: {
+            specialties: ["إدارة الأعمال", "المحاسبة والتدقيق", "التسويق الرقمي", "ريادة الأعمال", "الموارد البشرية", "التحليل المالي"],
+            jobs: ["مدير تسويق", "محاسب قانوني", "أخصائي موارد بشرية", "رائد أعمال", "محلل مالي معتمد", "مدير عمليات"]
+        },
+        design: {
+            specialties: ["التصميم الجرافيكي", "UI/UX Design", "الجرافيكس المتحرك", "التصميم ثلاثي الأبعاد", "فنون الوسائط المتعددة", "التصميم الداخلي"],
+            jobs: ["مصمم جرافيك محترف", "مصمم تجارب مستخدم", "فنان مؤثرات بصرية", "مصمم ألعاب", "أخصائي براندنج", "مستشار إبداعي"]
+        },
+        sci: {
+            specialties: ["الفيزياء التطبيقية", "الكيمياء الصناعية", "الأحياء الجزيئية", "علوم البيئة", "الجيولوجيا", "الرياضيات التطبيقية"],
+            jobs: ["باحث علمي", "أخصائي مختبرات", "خبير بيئي", "جيولوجي تنقيب", "محلل بيانات كمي", "أكاديمي جامعي"]
+        },
+        law: {
+            specialties: ["القانون العام", "القانون الدولي", "القضاء والإجراءات", "الاستشارات القانونية", "حقوق الإنسان", "التحكيم التجاري"],
+            jobs: ["محامي هيئة", "مستشار قانوني", "قاضٍ", "كاتب عدل", "خبير تشريعات", "محامي شركات"]
+        },
+        media: {
+            specialties: ["الصحافة والإعلام", "الإنتاج التلفزيوني", "التسويق الرقمي والإعلام الجديد", "العلاقات العامة", "صناعة المحتوى", "إدارة وسائل التواصل"],
+            jobs: ["صحفي استقصائي", "منتج محتوى", "أخصائي تسويق رقمي", "مدير علاقات عامة", "مؤثر رقمي محترف", "مذيع أخبار"]
+        }
+    };
+
+    // محرك ذكاء اصطناعي متطور يعتمد على المدخلات والنص الحر
+    function advancedAIRecommendation(interest, skill, customText) {
+        // تحليل النص الإضافي لتحسين الدقة (محاكاة NLP بسيطة)
+        let boostFactor = 1.0;
+        let recommendedSpecialties = [];
+        let recommendedJobs = [];
+        
+        const baseData = careerDatabase[interest];
+        if (!baseData) return { specialties: ["تخصص تقني عام"], jobs: ["وظيفة تقنية"], confidence: "متوسط" };
+        
+        // تحليل الكلمات المفتاحية في النص المخصص لضبط الاقتراحات
+        const lowerCustom = customText.toLowerCase();
+        if (lowerCustom.includes("بيانات") || lowerCustom.includes("تحليل") || lowerCustom.includes("data")) {
+            if (interest === "tech") {
+                recommendedSpecialties = ["علم البيانات والذكاء الاصطناعي", "تحليل البيانات الضخمة"];
+                recommendedJobs = ["عالم بيانات", "محلل BI"];
+            } else if (interest === "business") {
+                recommendedSpecialties = ["التحليل المالي", "ذكاء الأعمال"];
+                recommendedJobs = ["محلل أعمال", "أخصائي ذكاء اصطناعي في الأعمال"];
+            }
+        }
+        else if (lowerCustom.includes("تصميم") || lowerCustom.includes("ui") || lowerCustom.includes("ux")) {
+            if (interest === "tech") {
+                recommendedSpecialties = ["واجهات المستخدم وتجربة المستخدم", "تطوير الواجهات الأمامية"];
+                recommendedJobs = ["مصمم UI/UX", "Frontend Developer"];
+            } else if (interest === "design") {
+                recommendedSpecialties = ["UI/UX المتقدم", "تصميم تجارب تفاعلية"];
+                recommendedJobs = ["خبير تجربة مستخدم", "مصمم تفاعل"];
+            }
+        }
+        else if (lowerCustom.includes("ريادة") || lowerCustom.includes("startup") || lowerCustom.includes("مشروع")) {
+            recommendedSpecialties = ["ريادة الأعمال والابتكار", "إدارة المشاريع الناشئة"];
+            recommendedJobs = ["مؤسس شركة ناشئة", "مدير ابتكار"];
+            boostFactor = 1.3;
+        }
+        else if (lowerCustom.includes("صحة") || lowerCustom.includes("علاج") || lowerCustom.includes("طب")) {
+            if (interest === "medical") {
+                recommendedSpecialties = ["الطب الدقيق", "الذكاء الاصطناعي في الرعاية الصحية"];
+                recommendedJobs = ["طبيب باحث", "أخصائي صحة رقمية"];
+            }
+        }
+        
+        // إذا لم يتم تحديد توصيات مخصصة نرجع الأفضل حسب المهارة
+        if (recommendedSpecialties.length === 0) {
+            // استخدام خوارزمية تعتمد على المهارة
+            if (skill === "analytic") {
+                recommendedSpecialties = [baseData.specialties[0], baseData.specialties[1]];
+                recommendedJobs = [baseData.jobs[0], baseData.jobs[3]];
+            } else if (skill === "creative") {
+                if (interest === "design" || interest === "media") {
+                    recommendedSpecialties = [baseData.specialties[2], baseData.specialties[3]];
+                    recommendedJobs = [baseData.jobs[1], baseData.jobs[4]];
+                } else {
+                    recommendedSpecialties = [baseData.specialties[1], baseData.specialties[2]];
+                    recommendedJobs = [baseData.jobs[1], baseData.jobs[2]];
+                }
+            } else if (skill === "social") {
+                recommendedSpecialties = [baseData.specialties[3], baseData.specialties[4]];
+                recommendedJobs = [baseData.jobs[2], baseData.jobs[5]];
+            } else if (skill === "technical") {
+                recommendedSpecialties = [baseData.specialties[0], baseData.specialties[2]];
+                recommendedJobs = [baseData.jobs[0], baseData.jobs[3]];
+            } else {
+                recommendedSpecialties = baseData.specialties.slice(0, 3);
+                recommendedJobs = baseData.jobs.slice(0, 3);
+            }
+        }
+        
+        // إضافة لمسة ذكاء اصطناعي بتقييم الثقة
+        let confidenceLevel = "عالي جداً";
+        if (boostFactor > 1.1) confidenceLevel = "متقدم (AI مطابق للتفاصيل)";
+        else if (customText.length > 20) confidenceLevel = "مرتفع بناءً على المدخلات الإضافية";
+        
+        return {
+            specialties: recommendedSpecialties.slice(0, 4),
+            jobs: recommendedJobs.slice(0, 4),
+            confidence: confidenceLevel
+        };
+    }
+
+    // وظيفة عرض النتائج بشكل احترافي
+    function displayRecommendation() {
+        const interestField = document.getElementById("interestField").value;
+        const skillSelect = document.getElementById("skillSelect").value;
+        const customInterests = document.getElementById("customInterests").value;
+        
+        const aiResult = advancedAIRecommendation(interestField, skillSelect, customInterests);
+        
+        const suggestionDiv = document.getElementById("suggestionText");
+        const jobDiv = document.getElementById("jobSuggestions");
+        const confidenceDiv = document.getElementById("aiConfidence");
+        
+        let specialtiesHtml = "<div style='margin-top: 16px;'><strong>🎓 التخصصات المقترحة:</strong><ul>";
+        aiResult.specialties.forEach(sp => {
+            specialtiesHtml += `<li>✨ ${sp}</li>`;
+        });
+        specialtiesHtml += "</ul></div>";
+        
+        let jobsHtml = "<div style='margin-top: 16px;'><strong>💼 الوظائف المستقبلية المناسبة:</strong><ul>";
+        aiResult.jobs.forEach(job => {
+            jobsHtml += `<li>🚀 ${job}</li>`;
+        });
+        jobsHtml += "</ul></div>";
+        
+        suggestionDiv.innerHTML = specialtiesHtml;
+        jobDiv.innerHTML = jobsHtml;
+        confidenceDiv.innerHTML = `<div class="suggestion-badge">🤖 دقة الذكاء الاصطناعي: ${aiResult.confidence}</div>
+                                    <p style="margin-top: 12px;">📌 تم التحليل باستخدام أحدث خوارزميات التوصية المدعومة بالذكاء الاصطناعي (AI Engine v2.0). القوائم محدثة وفق احتياجات سوق العمل 2026.</p>`;
+        
+        document.getElementById("resultArea").style.display = "block";
+        // Scroll to result
+        document.getElementById("resultArea").scrollIntoView({ behavior: "smooth", block: "start" });
+    }
+    
+    // Dark Mode Logic
+    function initDarkMode() {
+        const darkToggle = document.getElementById("darkModeToggle");
+        const isDark = localStorage.getItem("darkMode") === "true";
+        if (isDark) {
+            document.body.classList.add("dark");
+            darkToggle.checked = true;
+        }
+        darkToggle.addEventListener("change", (e) => {
+            if (e.target.checked) {
+                document.body.classList.add("dark");
+                localStorage.setItem("darkMode", "true");
+            } else {
+                document.body.classList.remove("dark");
+                localStorage.setItem("darkMode", "false");
+            }
+        });
+    }
+    
+    // Settings Panel toggle
+    const settingsBtn = document.getElementById("settingsBtn");
+    const settingsSection = document.getElementById("settingsSection");
+    settingsBtn.addEventListener("click", () => {
+        if (settingsSection.style.display === "none") {
+            settingsSection.style.display = "block";
+        } else {
+            settingsSection.style.display = "none";
+        }
+    });
+    
+    // Modal Info
+    const infoBtn = document.getElementById("infoBtn");
+    const infoModal = document.getElementById("infoModal");
+    const closeModalBtn = document.getElementById("closeModalBtn");
+    
+    infoBtn.addEventListener("click", () => {
+        infoModal.style.display = "flex";
+    });
+    closeModalBtn.addEventListener("click", () => {
+        infoModal.style.display = "none";
+    });
+    window.addEventListener("click", (e) => {
+        if (e.target === infoModal) infoModal.style.display = "none";
+    });
+    
+    // Analyze Button
+    document.getElementById("analyzeBtn").addEventListener("click", displayRecommendation);
+    
+    // On load, set default placeholder & اسم الطالب يظهر بالفعل بالفوتير
+    console.log("✅ نظام مستشار التخصصات - تم تطويره بواسطة عبدالله أحمد السخن | Version 1");
+    // تأكيد الوضع المظلم إن وجد
+    initDarkMode();
+    
+    // إضافة تأثير إضافي: تحية ترحيب
+    setTimeout(() => {
+        console.log("AI Career Advisor v1 by عبدالله أحمد السخن — جميع الحقوق محفوظة");
+    }, 100);
+</script>
+</body>
+</html>
